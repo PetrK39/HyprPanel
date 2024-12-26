@@ -25,7 +25,7 @@ class Wallpaper extends GObject.Object {
                     '--transition-duration',
                     '1.5',
                     '--transition-fps',
-                    '30',
+                    '120',
                     '--transition-pos',
                     pos.replace(' ', ''),
                     WP,
