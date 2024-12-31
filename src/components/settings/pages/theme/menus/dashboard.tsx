@@ -36,46 +36,6 @@ export const DashboardMenuTheme = (): JSX.Element => {
                 <Option opt={options.theme.bar.menus.menu.dashboard.powermenu.restart} title="Restart" type="color" />
                 <Option opt={options.theme.bar.menus.menu.dashboard.powermenu.logout} title="Log Out" type="color" />
                 <Option opt={options.theme.bar.menus.menu.dashboard.powermenu.sleep} title="Sleep" type="color" />
-                <Option
-                    opt={options.theme.bar.menus.menu.dashboard.powermenu.confirmation.card}
-                    title="Confirmation Dialog Card"
-                    type="color"
-                />
-                <Option
-                    opt={options.theme.bar.menus.menu.dashboard.powermenu.confirmation.background}
-                    title="Confirmation Dialog Background"
-                    type="color"
-                />
-                <Option
-                    opt={options.theme.bar.menus.menu.dashboard.powermenu.confirmation.border}
-                    title="Confirmation Dialog Border"
-                    type="color"
-                />
-                <Option
-                    opt={options.theme.bar.menus.menu.dashboard.powermenu.confirmation.label}
-                    title="Confirmation Dialog Label"
-                    type="color"
-                />
-                <Option
-                    opt={options.theme.bar.menus.menu.dashboard.powermenu.confirmation.body}
-                    title="Confirmation Dialog Description"
-                    type="color"
-                />
-                <Option
-                    opt={options.theme.bar.menus.menu.dashboard.powermenu.confirmation.confirm}
-                    title="Confirmation Dialog Confirm Button"
-                    type="color"
-                />
-                <Option
-                    opt={options.theme.bar.menus.menu.dashboard.powermenu.confirmation.deny}
-                    title="Confirmation Dialog Cancel Button"
-                    type="color"
-                />
-                <Option
-                    opt={options.theme.bar.menus.menu.dashboard.powermenu.confirmation.button_text}
-                    title="Confirmation Dialog Button Text"
-                    type="color"
-                />
 
                 {/* Shortcuts Section */}
                 <Header title="Shortcuts" />

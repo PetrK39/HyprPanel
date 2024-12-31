@@ -17,74 +17,130 @@ export const PowerMenuTheme = (): JSX.Element => {
                 {/* Background Section */}
                 <Header title="Background" />
                 <Option opt={options.theme.bar.menus.menu.power.background.color} title="Background" type="color" />
-
-                {/* Border Section */}
-                <Header title="Border" />
-                <Option opt={options.theme.bar.menus.menu.power.border.color} title="Border" type="color" />
-
-                {/* Shutdown Button Section */}
-                <Header title="Shutdown Button" />
                 <Option
-                    opt={options.theme.bar.menus.menu.power.buttons.shutdown.background}
-                    title="Label Background"
+                    opt={options.theme.bar.menus.menu.power.background.opacity}
+                    title="Opacity"
+                    type="number"
+                    increment={10}
+                    min={0}
+                    max={100}
+                />
+                {/* Buttons Section */}
+                <Header title="Buttons" />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.opacity}
+                    title="Opacity"
+                    type="number"
+                    min={0}
+                    max={100}
+                    increment={10}
+                />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.opacity_active}
+                    title="Opacity Active"
+                    type="number"
+                    min={0}
+                    max={100}
+                    increment={10}
+                />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.individual_colors}
+                    title="Individual Colors"
+                    subtitle="Use individual colors for each button, Otherwise select variant below"
+                    type="boolean"
+                />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.individual_colors_variant}
+                    title="Default Button Style"
+                    subtitle="Use selected button colors when buttons aren't using individual colors"
+                    type="enum"
+                    enums={['lock', 'logout', 'sleep', 'hibernate', 'shutdown', 'reboot', 'cancel']}
+                    disabledBinding={options.theme.bar.menus.menu.power.buttons.individual_colors}
+                />
+                {/* Lock Button Section */}
+                <Header title="Lock Button" />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.lock.background}
+                    title="Background"
                     type="color"
                 />
                 <Option
-                    opt={options.theme.bar.menus.menu.power.buttons.shutdown.icon_background}
-                    title="Icon Background"
+                    opt={options.theme.bar.menus.menu.power.buttons.lock.foreground}
+                    title="Foreground"
                     type="color"
                 />
-                <Option
-                    opt={options.theme.bar.menus.menu.power.buttons.shutdown.text}
-                    title="Label Text"
-                    type="color"
-                />
-                <Option opt={options.theme.bar.menus.menu.power.buttons.shutdown.icon} title="Icon" type="color" />
-
-                {/* Reboot Button Section */}
-                <Header title="Reboot Button" />
-                <Option
-                    opt={options.theme.bar.menus.menu.power.buttons.restart.background}
-                    title="Label Background"
-                    type="color"
-                />
-                <Option
-                    opt={options.theme.bar.menus.menu.power.buttons.restart.icon_background}
-                    title="Icon Background"
-                    type="color"
-                />
-                <Option opt={options.theme.bar.menus.menu.power.buttons.restart.text} title="Label Text" type="color" />
-                <Option opt={options.theme.bar.menus.menu.power.buttons.restart.icon} title="Icon" type="color" />
-
                 {/* Logout Button Section */}
                 <Header title="Logout Button" />
                 <Option
                     opt={options.theme.bar.menus.menu.power.buttons.logout.background}
-                    title="Label Background"
+                    title="Background"
                     type="color"
                 />
                 <Option
-                    opt={options.theme.bar.menus.menu.power.buttons.logout.icon_background}
-                    title="Icon Background"
+                    opt={options.theme.bar.menus.menu.power.buttons.logout.foreground}
+                    title="Foreground"
                     type="color"
                 />
-                <Option opt={options.theme.bar.menus.menu.power.buttons.logout.text} title="Label Text" type="color" />
-                <Option opt={options.theme.bar.menus.menu.power.buttons.logout.icon} title="Icon" type="color" />
-
                 {/* Sleep Button Section */}
                 <Header title="Sleep Button" />
                 <Option
                     opt={options.theme.bar.menus.menu.power.buttons.sleep.background}
-                    title="Label Background"
+                    title="Background"
                     type="color"
                 />
                 <Option
-                    opt={options.theme.bar.menus.menu.power.buttons.sleep.icon_background}
-                    title="Icon Background"
+                    opt={options.theme.bar.menus.menu.power.buttons.sleep.foreground}
+                    title="Foreground"
                     type="color"
                 />
-                <Option opt={options.theme.bar.menus.menu.power.buttons.sleep.text} title="Label Text" type="color" />
-                <Option opt={options.theme.bar.menus.menu.power.buttons.sleep.icon} title="Icon" type="color" />
+                {/* Hibernate Button Section */}
+                <Header title="Hibernate Button" />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.hibernate.background}
+                    title="Background"
+                    type="color"
+                />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.hibernate.foreground}
+                    title="Foreground"
+                    type="color"
+                />
+                {/* Shutdown Button Section */}
+                <Header title="Shutdown Button" />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.shutdown.background}
+                    title="Background"
+                    type="color"
+                />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.shutdown.foreground}
+                    title="Foreground"
+                    type="color"
+                />
+                {/* Reboot Button Section */}
+                <Header title="Shutdown Button" />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.restart.background}
+                    title="Background"
+                    type="color"
+                />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.restart.foreground}
+                    title="Foreground"
+                    type="color"
+                />
+                {/* Cancel Button Section */}
+                <Header title="Shutdown Button" />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.cancel.background}
+                    title="Background"
+                    type="color"
+                />
+                <Option
+                    opt={options.theme.bar.menus.menu.power.buttons.cancel.foreground}
+                    title="Foreground"
+                    type="color"
+                />
             </box>
         </scrollable>
     );

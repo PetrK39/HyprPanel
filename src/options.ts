@@ -19,6 +19,7 @@ import { SystrayIconMap } from './lib/types/systray';
 import { UnitType } from './lib/types/weather';
 import { Transition } from './lib/types/widget';
 import { ApplicationIcons, WorkspaceIcons, WorkspaceIconsColored } from './lib/types/workspace';
+import { Action as PowerAction } from './lib/types/power';
 
 // WARN: CHANGING THESE VALUES WILL PREVENT MATUGEN COLOR GENERATION FOR THE CHANGED VALUE
 export const colors = {
@@ -734,16 +735,6 @@ const options = mkOptions(CONFIG, {
                             restart: opt(colors.peach),
                             logout: opt(colors.green),
                             sleep: opt(colors.sky),
-                            confirmation: {
-                                card: opt(colors.base),
-                                background: opt(colors.crust),
-                                border: opt(colors.surface0),
-                                label: opt(colors.lavender),
-                                body: opt(colors.text),
-                                confirm: opt(colors.green),
-                                deny: opt(colors.red),
-                                button_text: opt(secondary_colors.crust),
-                            },
                         },
                         shortcuts: {
                             background: opt(colors.lavender),
@@ -823,37 +814,46 @@ const options = mkOptions(CONFIG, {
                     },
                     power: {
                         scaling: opt(90),
-                        radius: opt('0.4em'),
                         background: {
                             color: opt(colors.crust),
-                        },
-                        border: {
-                            color: opt(colors.surface0),
+                            opacity: opt(100),
                         },
                         buttons: {
-                            shutdown: {
+                            radius: opt('1.5em'),
+                            size: opt('10em'),
+                            spacing: opt('1.5em'),
+                            icon_size: opt('3em'),
+                            individual_colors: opt(true),
+                            individual_colors_variant: opt<PowerAction | 'cancel'>('lock'),
+                            opacity: opt(100),
+                            opacity_active: opt(100),
+                            lock: {
                                 background: opt(colors.base),
-                                icon_background: opt(secondary_colors.red),
-                                text: opt(colors.red),
-                                icon: opt(secondary_colors.mantle),
-                            },
-                            restart: {
-                                background: opt(colors.base),
-                                icon_background: opt(secondary_colors.peach),
-                                text: opt(colors.peach),
-                                icon: opt(secondary_colors.mantle),
+                                foreground: opt(colors.teal),
                             },
                             logout: {
                                 background: opt(colors.base),
-                                icon_background: opt(secondary_colors.green),
-                                text: opt(colors.green),
-                                icon: opt(secondary_colors.mantle),
+                                foreground: opt(colors.green),
                             },
                             sleep: {
                                 background: opt(colors.base),
-                                icon_background: opt(secondary_colors.sky),
-                                text: opt(colors.sky),
-                                icon: opt(secondary_colors.mantle),
+                                foreground: opt(colors.lavender),
+                            },
+                            hibernate: {
+                                background: opt(colors.base),
+                                foreground: opt(colors.mauve),
+                            },
+                            shutdown: {
+                                background: opt(colors.base),
+                                foreground: opt(colors.red),
+                            },
+                            restart: {
+                                background: opt(colors.base),
+                                foreground: opt(colors.peach),
+                            },
+                            cancel: {
+                                background: opt(colors.base),
+                                foreground: opt(colors.sky),
                             },
                         },
                     },
@@ -1188,15 +1188,16 @@ const options = mkOptions(CONFIG, {
                 'Your battery is running low ($POWER_LEVEL %).\n\nPlease plug in your charger.',
             ),
             showLabel: opt(true),
-            confirmation: opt(true),
+            default_action: opt<PowerAction | 'cancel'>('lock'),
             sleep: opt('systemctl suspend'),
             reboot: opt('systemctl reboot'),
             logout: opt('hyprctl dispatch exit'),
             shutdown: opt('systemctl poweroff'),
+            hibernate: opt('systemctl hibernate'),
+            lock: opt('loginctl lock-session'),
         },
         dashboard: {
             powermenu: {
-                confirmation: opt(true),
                 sleep: opt('systemctl suspend'),
                 reboot: opt('systemctl reboot'),
                 logout: opt('hyprctl dispatch exit'),

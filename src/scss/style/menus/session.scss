@@ -1,0 +1,100 @@
+@function transparentize_opacity($color, $opacity) {
+  $opacity-ratio: $opacity * 0.01;
+  $transparency-value: 1 - $opacity-ratio;
+  @return transparentize($color, $transparency-value);
+}
+
+.material-icon {
+  font-family: "Material Symbols Rounded", "MaterialSymbolsRounded", "Material Symbols Outlined", "Material Symbols Sharp";
+  font-size: $bar-menus-menu-power-buttons-icon_size * $bar-menus-menu-power-scaling * 0.01;
+}
+
+window#sessionmenu {
+  background-color: transparentize_opacity($bar-menus-menu-power-background-color, $bar-menus-menu-power-background-opacity);
+}
+
+.session-button-desc {
+  border-bottom-left-radius: $bar-menus-menu-power-buttons-radius;
+  border-bottom-right-radius: $bar-menus-menu-power-buttons-radius;
+  padding: 0.3em;
+  font-weight: 700;
+}
+
+.session-button {
+  border-radius: $bar-menus-menu-power-buttons-radius;
+  min-width: $bar-menus-menu-power-buttons-size * $bar-menus-menu-power-scaling * 0.01;
+  min-height: $bar-menus-menu-power-buttons-size * $bar-menus-menu-power-scaling * 0.01;
+}
+
+$buttons: 'lock', 'logout', 'sleep', 'hibernate', 'shutdown', 'reboot', 'cancel';
+$buttons-foregrounds: (
+        "lock": $bar-menus-menu-power-buttons-lock-foreground,
+        "logout": $bar-menus-menu-power-buttons-logout-foreground,
+        "sleep": $bar-menus-menu-power-buttons-sleep-foreground,
+        "hibernate": $bar-menus-menu-power-buttons-hibernate-foreground,
+        "shutdown": $bar-menus-menu-power-buttons-shutdown-foreground,
+        "reboot": $bar-menus-menu-power-buttons-restart-foreground,
+        "cancel": $bar-menus-menu-power-buttons-cancel-foreground,
+);
+$buttons-backgrounds: (
+        "lock": $bar-menus-menu-power-buttons-lock-background,
+        "logout": $bar-menus-menu-power-buttons-logout-background,
+        "sleep": $bar-menus-menu-power-buttons-sleep-background,
+        "hibernate": $bar-menus-menu-power-buttons-hibernate-background,
+        "shutdown": $bar-menus-menu-power-buttons-shutdown-background,
+        "reboot": $bar-menus-menu-power-buttons-restart-background,
+        "cancel": $bar-menus-menu-power-buttons-cancel-background,
+);
+
+@function map-button-bg($button) {
+  @return map-get($buttons-backgrounds, if($bar-menus-menu-power-buttons-individual_colors, $button, $bar-menus-menu-power-buttons-individual_colors_variant));
+}
+@function map-button-fg($button) {
+  @return map-get($buttons-foregrounds, if($bar-menus-menu-power-buttons-individual_colors, $button, $bar-menus-menu-power-buttons-individual_colors_variant));
+}
+
+@each $button in $buttons {
+  .session-button-#{$button} {
+    background-color: transparentize_opacity(map-button-bg($button), $bar-menus-menu-power-buttons-opacity);
+    color: map-button-fg($button);
+
+    .session-button-desc {
+      background-color: transparentize_opacity(map-button-fg($button), $bar-menus-menu-power-buttons-opacity_active);
+      color: map-button-bg($button);
+      font-size: 1em * $bar-menus-menu-power-scaling * 0.01;
+    }
+
+    &.session-button-focused {
+      background-color: transparentize_opacity(map-button-bg($button), $bar-menus-menu-power-buttons-opacity_active);
+    }
+  }
+}
+
+.session-button-cancel {
+  min-height: $bar-menus-menu-power-buttons-size * 0.618 * $bar-menus-menu-power-scaling * 0.01;
+}
+
+
+.spacing-v > * {
+  margin-bottom: $bar-menus-menu-power-buttons-spacing * $bar-menus-menu-power-scaling * 0.01;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.spacing-h > * {
+  margin-right: $bar-menus-menu-power-buttons-spacing * $bar-menus-menu-power-scaling * 0.01;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.spacing-h > revealer > * {
+  margin-right: $bar-menus-menu-power-buttons-spacing * $bar-menus-menu-power-scaling * 0.01;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
