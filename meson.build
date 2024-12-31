@@ -42,7 +42,7 @@ custom_target(
     'bundle',
     meson.project_source_root() / 'app.ts',
     '@OUTPUT@',
-    '--src', meson.project_source_root(),
+    '--root', meson.project_source_root(),
   ],
   output: 'hyprpanel.js',
   install: true,

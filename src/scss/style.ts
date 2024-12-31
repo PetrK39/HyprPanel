@@ -4,7 +4,7 @@ import { MatugenColors, RecursiveOptionsObject } from '../lib/types/options';
 import { initializeTrackers } from './optionsTrackers';
 import { generateMatugenColors, getMatugenHex, replaceHexValues } from '../services/matugen/index';
 import { isHexColor } from '../globals/variables';
-import { readFile, writeFile } from 'astal/file';
+import { monitorFile, readFile, writeFile } from 'astal/file';
 import { App } from 'astal/gtk3';
 import { initializeHotReload } from './utils/hotReload';
 import { defaultFile } from 'src/lib/option';
@@ -79,11 +79,7 @@ export const resetCss = async (): Promise<void> => {
     try {
         const matugenColors = await generateMatugenColors();
 
-        if (options.theme.matugen.get() && matugenColors) {
-            variables = await extractMatugenizedVariables(matugenColors);
-        } else {
-            variables = extractVariables(options.theme as RecursiveOptionsObject, '', undefined);
-        }
+        variables = extractVariables(options.theme as RecursiveOptionsObject, '', matugenColors);
 
         const vars = `${TMP}/variables.scss`;
         const css = `${TMP}/main.css`;
@@ -103,6 +99,7 @@ export const resetCss = async (): Promise<void> => {
         writeFile(scss, mainScss);
 
         await bash(`sass --load-path=${SRC_DIR}/src/scss ${scss} ${css}`);
+        console.log(`sass --load-path=${SRC_DIR}/src/scss ${scss} ${css}`);
 
         App.apply_css(css, true);
     } catch (error) {

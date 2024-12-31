@@ -22,7 +22,8 @@
         "jsxImportSource": "/usr/share/astal/gjs/gtk3",
         "paths": {
             "astal": ["/usr/share/astal/gjs"],
-            "astal/*": ["/usr/share/astal/gjs/*"]
+            "astal/*": ["/usr/share/astal/gjs/*"],
+            "gi://Astal*": ["/usr/share/ags/@girs"]
         }
     },
     "exclude": ["astal/gtk3/jsx-runtime.ts"]
