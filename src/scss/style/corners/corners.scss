@@ -1,0 +1,26 @@
+window.screencorners {
+  border-radius: $corners-screen_radius;
+  box-shadow: 0 0 0 $corners-screen_radius black;
+}
+
+window.barcorners-top {
+  $bar-opacity-ratio: $bar-opacity * 0.01;
+  $transparency-value: 1 - $bar-opacity-ratio;
+  border-top-left-radius: $corners-bar_radius;
+  border-top-right-radius: $corners-bar_radius;
+  box-shadow: 0 0 0 $corners-bar_radius if($bar-transparent, transparent, transparentize($bar-background, $transparency-value));
+}
+
+window.barcorners-bottom {
+  $bar-opacity-ratio: $bar-opacity * 0.01;
+  $transparency-value: 1 - $bar-opacity-ratio;
+  border-bottom-left-radius: $corners-bar_radius;
+  border-bottom-right-radius: $corners-bar_radius;
+  box-shadow: 0 0 0 $corners-bar_radius if($bar-transparent, transparent, transparentize($bar-background, $transparency-value));;
+}
+
+window.barcorners-bottom,
+window.barcorners-top,
+window.screencorners {
+  transition: all 200ms ease;
+}

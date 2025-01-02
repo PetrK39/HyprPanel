@@ -887,6 +887,10 @@ const options = mkOptions(CONFIG, {
                 },
             },
         },
+        corners: {
+            screen_radius: opt('1.5em'),
+            bar_radius: opt('1.5em'),
+        },
     },
 
     bar: {
@@ -1325,6 +1329,11 @@ const options = mkOptions(CONFIG, {
     hyprpanel: {
         restartAgs: opt(true),
         restartCommand: opt('hyprpanel -q; hyprpanel'),
+    },
+
+    corners: {
+        enable_screen: opt(true),
+        enable_bar: opt(true),
     },
 
     dummy: opt(true),

@@ -14,6 +14,7 @@ import { ClockMenuSettings } from './menus/clock';
 import { DashboardMenuSettings } from './menus/dashboard';
 import { CustomModuleSettings } from 'src/components/bar/settings/config';
 import { PowerMenuSettings } from './menus/power';
+import { CornersSettings } from './corners';
 
 const { transition, transitionTime } = options.menus;
 
@@ -67,6 +68,7 @@ export const SettingsMenu = (): JSX.Element => {
                 <DashboardMenuSettings />
                 <CustomModuleSettings />
                 <PowerMenuSettings />
+                <CornersSettings />
             </stack>
         </box>
     );

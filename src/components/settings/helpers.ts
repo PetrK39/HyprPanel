@@ -17,6 +17,7 @@ export const themePages = [
     'Volume Menu',
     'Power Menu',
     'Custom Modules',
+    'Corners',
 ] as const;
 
 export const configPages = [
@@ -30,6 +31,7 @@ export const configPages = [
     'Dashboard Menu',
     'Custom Modules',
     'Power Menu',
+    'Corners',
 ] as const;
 
 export type ThemePage = (typeof themePages)[number];

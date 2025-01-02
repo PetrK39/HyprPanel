@@ -20,6 +20,7 @@ import { VolumeMenuTheme } from './menus/volume';
 import { PowerMenuTheme } from './menus/power';
 import { CustomModuleTheme } from 'src/components/bar/settings/theme';
 import { ThemePage, themePages } from '../../helpers';
+import { CornersTheme } from './corners';
 
 const { transition, transitionTime } = options.menus;
 
@@ -79,6 +80,7 @@ export const ThemesMenu = (): JSX.Element => {
                 <VolumeMenuTheme />
                 <PowerMenuTheme />
                 <CustomModuleTheme />
+                <CornersTheme />
             </stack>
         </box>
     );

@@ -21,6 +21,7 @@ import { handleRealization } from 'src/components/menus/shared/dropdown/helpers'
 import { isDropdownMenu } from 'src/lib/constants/options.js';
 import { initializeSystemBehaviors } from 'src/lib/behaviors';
 import { runCLI } from 'src/cli/commander';
+import { BarCorners, ScreenCorners } from "./src/components/corners";
 
 const initializeStartupScripts = (): void => {
     execAsync(`python3 ${SRC_DIR}/scripts/bluetooth.py`).catch((err) => console.error(err));
@@ -56,7 +57,11 @@ App.start({
 
         Notifications();
         OSD();
+
         forMonitors(Bar).forEach((bar: JSX.Element) => bar);
+        forMonitors(ScreenCorners);
+        forMonitors(BarCorners);
+
         SettingsDialog();
         initializeMenus();
 
