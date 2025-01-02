@@ -99,7 +99,6 @@ export const resetCss = async (): Promise<void> => {
         writeFile(scss, mainScss);
 
         await bash(`sass --load-path=${SRC_DIR}/src/scss ${scss} ${css}`);
-        console.log(`sass --load-path=${SRC_DIR}/src/scss ${scss} ${css}`);
 
         App.apply_css(css, true);
     } catch (error) {
