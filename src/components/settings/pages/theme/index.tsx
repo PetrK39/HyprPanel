@@ -21,6 +21,7 @@ import { PowerMenuTheme } from './menus/power';
 import { CustomModuleTheme } from 'src/components/bar/settings/theme';
 import { ThemePage, themePages } from '../../helpers';
 import { CornersTheme } from './corners';
+import { HyprlandTheme } from "./hyprland";
 
 const { transition, transitionTime } = options.menus;
 
@@ -81,6 +82,7 @@ export const ThemesMenu = (): JSX.Element => {
                 <PowerMenuTheme />
                 <CustomModuleTheme />
                 <CornersTheme />
+                <HyprlandTheme />
             </stack>
         </box>
     );

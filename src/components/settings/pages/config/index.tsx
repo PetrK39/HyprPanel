@@ -15,6 +15,7 @@ import { DashboardMenuSettings } from './menus/dashboard';
 import { CustomModuleSettings } from 'src/components/bar/settings/config';
 import { PowerMenuSettings } from './menus/power';
 import { CornersSettings } from './corners';
+import { HyprlandSettings } from './hyprland';
 
 const { transition, transitionTime } = options.menus;
 
@@ -69,6 +70,7 @@ export const SettingsMenu = (): JSX.Element => {
                 <CustomModuleSettings />
                 <PowerMenuSettings />
                 <CornersSettings />
+                <HyprlandSettings />
             </stack>
         </box>
     );

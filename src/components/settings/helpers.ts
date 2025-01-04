@@ -18,6 +18,7 @@ export const themePages = [
     'Power Menu',
     'Custom Modules',
     'Corners',
+    'Hyprland',
 ] as const;
 
 export const configPages = [
@@ -32,6 +33,7 @@ export const configPages = [
     'Custom Modules',
     'Power Menu',
     'Corners',
+    'Hyprland',
 ] as const;
 
 export type ThemePage = (typeof themePages)[number];

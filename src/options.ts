@@ -1336,6 +1336,19 @@ const options = mkOptions(CONFIG, {
         enable_bar: opt(true),
     },
 
+    hyprland: {
+        enabled: opt(true),
+        gaps_in: opt(4),
+        gaps_out: opt(5),
+        gaps_workspaces: opt(50),
+        border_size: opt(1),
+        border_rounding: opt(20),
+        active_border: opt(colors.pink),
+        active_border_opacity: opt(100),
+        inactive_border: opt(colors.lavender),
+        inactive_border_opacity: opt(100),
+    },
+
     dummy: opt(true),
 });
 

@@ -22,6 +22,7 @@ import { isDropdownMenu } from 'src/lib/constants/options.js';
 import { initializeSystemBehaviors } from 'src/lib/behaviors';
 import { runCLI } from 'src/cli/commander';
 import { BarCorners, ScreenCorners } from "./src/components/corners";
+import { initializeHyprlandIntegrations } from "./src/components/hyprland";
 
 const initializeStartupScripts = (): void => {
     execAsync(`python3 ${SRC_DIR}/scripts/bluetooth.py`).catch((err) => console.error(err));
@@ -66,6 +67,7 @@ App.start({
         initializeMenus();
 
         initializeSystemBehaviors();
+        initializeHyprlandIntegrations();
     },
 });
 
