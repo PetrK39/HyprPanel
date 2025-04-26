@@ -1,15 +1,13 @@
 import options from '../options';
 import { bash, dependencies } from '../lib/utils';
 import { MatugenColors, RecursiveOptionsObject } from '../lib/types/options';
-import { initializeTrackers } from './optionsTrackers';
-import { generateMatugenColors, getMatugenHex, replaceHexValues } from '../services/matugen/index';
+import { initializeMatugenUpdate, matugenColors, replaceHexValues } from '../services/matugen';
 import { isHexColor } from '../globals/variables';
-import { monitorFile, readFile, writeFile } from 'astal/file';
+import { readFile, writeFile } from 'astal/file';
 import { App } from 'astal/gtk3';
 import { initializeHotReload } from './utils/hotReload';
-import { defaultFile } from 'src/lib/option';
 
-const deps = ['font', 'theme', 'bar.flatButtons', 'bar.position', 'bar.battery.charging', 'bar.battery.blocks'];
+const deps = ['font', 'bar.flatButtons', 'bar.position', 'bar.battery.charging', 'bar.battery.blocks'];
 
 function extractVariables(theme: RecursiveOptionsObject, prefix = '', matugenColors?: MatugenColors): string[] {
     let result = [] as string[];
@@ -31,7 +29,7 @@ function extractVariables(theme: RecursiveOptionsObject, prefix = '', matugenCol
             result.push(`$${newPrefix}: ${replacedValue};`);
             continue;
         }
-        if (typeof themeValue !== 'object' || themeValue === null || Array.isArray(themeValue)) continue;
+        if (typeof themeValue !== 'object' || Array.isArray(themeValue)) continue;
 
         if (typeof themeValue.value !== 'undefined') {
             result.push(`$${newPrefix}: ${replacedValue};`);
@@ -43,55 +41,20 @@ function extractVariables(theme: RecursiveOptionsObject, prefix = '', matugenCol
     return result;
 }
 
-async function extractMatugenizedVariables(matugenColors: MatugenColors): Promise<string[]> {
-    try {
-        const result = [] as string[];
-
-        const defaultFileContent = JSON.parse(readFile(defaultFile) || '{}');
-
-        for (const key in defaultFileContent) {
-            if (key.startsWith('theme.') === false) {
-                continue;
-            }
-            const configValue = defaultFileContent[key];
-
-            if (!isHexColor(configValue) && matugenColors !== undefined) {
-                result.push(`$${key.replace('theme.', '').split('.').join('-')}: ${configValue};`);
-                continue;
-            }
-
-            const matugenColor = getMatugenHex(configValue, matugenColors);
-
-            result.push(`$${key.replace('theme.', '').split('.').join('-')}: ${matugenColor};`);
-        }
-
-        return result;
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
-}
-
 export const resetCss = async (): Promise<void> => {
     if (!dependencies('sass')) return;
 
-    let variables: string[] = [];
     try {
-        const matugenColors = await generateMatugenColors();
-
-        variables = extractVariables(options.theme as RecursiveOptionsObject, '', matugenColors);
+        const variables = extractVariables(options.theme as RecursiveOptionsObject, '', matugenColors.get());
 
         const vars = `${TMP}/variables.scss`;
         const css = `${TMP}/main.css`;
         const scss = `${TMP}/entry.scss`;
         const localScss = `${SRC_DIR}/src/scss/main.scss`;
 
-        const themeVariables = variables;
-        const integratedVariables = themeVariables;
-
         const imports = [vars].map((f) => `@import '${f}';`);
 
-        writeFile(vars, integratedVariables.join('\n'));
+        writeFile(vars, variables.join('\n'));
 
         let mainScss = readFile(localScss);
         mainScss = `${imports}\n${mainScss}`;
@@ -106,9 +69,10 @@ export const resetCss = async (): Promise<void> => {
     }
 };
 
-initializeTrackers(resetCss);
 initializeHotReload();
 
 options.handler(deps, resetCss);
 
-await resetCss();
+matugenColors.subscribe(resetCss);
+
+void initializeMatugenUpdate();

@@ -30,6 +30,7 @@
 @import 'style/bar/power';
 @import 'style/bar/battery';
 @import 'style/bar/style';
+@import 'style/bar/theme';
 
 //notifications
 @import 'style/notifications/popups';
@@ -45,6 +46,8 @@
 @import 'style/menus/energy';
 @import 'style/menus/dashboard';
 @import "style/menus/session";
+@import "style/menus/overview";
+@import 'style/menus/theme';
 
 //osd
 @import 'style/osd/index';

@@ -53,7 +53,7 @@ export const colors = {
 };
 
 // WARN: CHANGING THESE VALUES WILL PREVENT MATUGEN COLOR GENERATION FOR THE CHANGED VALUE
-const secondary_colors = {
+export const secondary_colors = {
     text: '#cdd6f3',
     pink: '#f5c2e6',
     red: '#f38ba7',
@@ -73,7 +73,7 @@ const secondary_colors = {
     surface2: '#585b69',
 };
 
-const tertiary_colors = {
+export const tertiary_colors = {
     pink: '#f5c2e8',
     red: '#f38ba9',
     mantle: '#181826',
@@ -293,6 +293,12 @@ const options = mkOptions(CONFIG, {
                     icon_background: opt(colors.base2),
                     total: opt(colors.lavender),
                     spacing: opt('0.5em'),
+                },
+                theme: {
+                    enableBorder: opt(false),
+                    border: opt(colors.pink),
+                    icon: opt(colors.pink),
+                    icon_background: opt(colors.base2),
                 },
                 modules: {
                     ram: {
@@ -891,6 +897,12 @@ const options = mkOptions(CONFIG, {
             screen_radius: opt('1.5em'),
             bar_radius: opt('1.5em'),
         },
+        overview: {
+            scaling: opt(100),
+            background: opt(colors.base),
+            foreground: opt(colors.maroon),
+            search_prompt: opt(colors.pink),
+        },
     },
 
     bar: {
@@ -1019,6 +1031,12 @@ const options = mkOptions(CONFIG, {
         notifications: {
             show_total: opt(false),
             hideCountWhenZero: opt(false),
+            rightClick: opt(''),
+            middleClick: opt(''),
+            scrollUp: opt(''),
+            scrollDown: opt(''),
+        },
+        theme: {
             rightClick: opt(''),
             middleClick: opt(''),
             scrollUp: opt(''),

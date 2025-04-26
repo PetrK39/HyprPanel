@@ -1,7 +1,7 @@
 import { monitorFile } from 'astal';
 import { resetCss } from '../style';
 
-export const initializeHotReload = async (): Promise<void> => {
+export const initializeHotReload = (): void => {
     const monitorList = [
         `${SRC_DIR}/src/scss/style/bar`,
         `${SRC_DIR}/src/scss/style/common`,

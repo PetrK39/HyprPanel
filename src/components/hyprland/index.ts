@@ -1,9 +1,8 @@
 import { hyprlandService } from '../../lib/constants/services.ts';
 import { execAsync, Variable } from 'astal';
 import options from '../../options.ts';
-import { generateMatugenColors, replaceHexValues } from '../../services/matugen';
+import { matugenColors, replaceHexValues } from '../../services/matugen';
 import { isHexColor } from '../../globals/variables.ts';
-import { initializeTrackers } from '../../scss/optionsTrackers.ts';
 
 const {
     enabled,
@@ -51,20 +50,17 @@ const applyHyprlandKeywords = async (
         return;
     }
 
-    const matugenColors = await generateMatugenColors();
+    const matugenColorsValue = matugenColors.get();
 
-    let active_border_color = transparentize(active_border, active_border_opacity);
-    if (isHexColor(active_border) && matugenColors) {
-        active_border_color = transparentize(replaceHexValues(active_border, matugenColors), active_border_opacity);
-    }
+    const active_border_color =
+        isHexColor(active_border) && matugenColorsValue
+            ? transparentize(replaceHexValues(active_border, matugenColorsValue), active_border_opacity)
+            : transparentize(active_border, active_border_opacity);
 
-    let inactive_border_color = transparentize(inactive_border, inactive_border_opacity);
-    if (isHexColor(inactive_border) && matugenColors) {
-        inactive_border_color = transparentize(
-            replaceHexValues(inactive_border, matugenColors),
-            inactive_border_opacity,
-        );
-    }
+    const inactive_border_color =
+        isHexColor(inactive_border) && matugenColorsValue
+            ? transparentize(replaceHexValues(inactive_border, matugenColorsValue), inactive_border_opacity)
+            : transparentize(inactive_border, inactive_border_opacity);
 
     const keywordMap = {
         'general:gaps_in': gaps_in,
@@ -108,8 +104,8 @@ const hyprlandIntegration = (): void => {
         applyHyprlandKeywords,
     );
 
-    const directApply = (): void => {
-        void applyHyprlandKeywords(
+    const directApply = async (): Promise<void> => {
+        await applyHyprlandKeywords(
             enabled.get(),
             gaps_in.get(),
             gaps_out.get(),
@@ -124,8 +120,7 @@ const hyprlandIntegration = (): void => {
     };
 
     hyprlandService.connect('config-reloaded', directApply);
-    initializeTrackers(directApply);
-    options.handler(['theme.matugen_settings'], directApply);
+    matugenColors.subscribe(directApply);
 };
 
 export const initializeHyprlandIntegrations = (): void => {

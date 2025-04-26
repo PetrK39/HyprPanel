@@ -1,0 +1,109 @@
+$color-card-color-size: 2em;
+
+.theme-menu-content * {
+  font-size: $font-size * $bar-menus-menu-notifications-scaling * 0.01;
+}
+
+.theme.menu-scroller {
+  min-height: 39.5em;
+}
+
+.theme-menu-content {
+  background: if($bar-menus-monochrome, $bar-menus-background, $bar-menus-menu-notifications-background);
+  border: $bar-menus-border-size solid if($bar-menus-monochrome, $bar-menus-border-color, $bar-menus-menu-notifications-border);
+  border-radius: $bar-menus-border-radius;
+  opacity: $bar-menus-opacity * 0.01;
+
+  .theme-card {
+    background: $notification-background;
+    font-size: $font-size * $bar-menus-menu-notifications-scaling * 0.01;
+    border: 0.15em solid $notification-border;
+    border-radius: $notification-border_radius;
+    margin: 1em 1em 0;
+
+    &:last-child {
+      margin-bottom: 1em;
+    }
+
+    .theme-card-label-container {
+      margin-top: 0.5em;
+      margin-bottom: 1.5em;
+      margin-left: 1em;
+
+      .theme-card-label {
+        font-size: 1.1em;
+        font-weight: 700;
+        color: if($bar-menus-monochrome, $bar-menus-label, $bar-menus-menu-notifications-label);
+
+        &.chevron {
+          color: if($bar-menus-monochrome, $bar-menus-iconbuttons-passive, $bar-menus-iconbuttons-passive);
+          margin-right: 1em;
+          font-size: 1.3em;
+          font-weight: bolder;
+        }
+      }
+
+      &:hover {
+        .theme-card-label {
+          &.chevron {
+            color: if($bar-menus-monochrome, $bar-menus-iconbuttons-active, $bar-menus-iconbuttons-active);
+          }
+        }
+      }
+    }
+
+    .theme-color-card-column {
+      margin-bottom: 0.75em;
+
+      &:first-child {
+        margin-left: 1em;
+      }
+      &:last-child {
+        margin-right: 1em;
+      }
+      &:not(:last-child) {
+        margin-right: 0.5em;
+      }
+
+      .theme-color-card {
+        margin: 0.25em;
+        margin-top: 0;
+
+        .theme-color-card-color {
+          min-width: $color-card-color-size;
+          min-height: $color-card-color-size;
+
+          &.border {
+            opacity: 0;
+            border-width: 0.2em;
+            border-style: solid;
+          }
+        }
+
+        .theme-color-card-label {
+          margin-left: 0.5em;
+          color: if($bar-menus-monochrome, $bar-menus-iconbuttons-passive, $bar-menus-iconbuttons-passive);
+
+
+
+          &.copied {
+            font-style: italic;
+            color: if($bar-menus-monochrome, $bar-menus-iconbuttons-active, $bar-menus-iconbuttons-active);
+          }
+        }
+
+        &:hover {
+          .theme-color-card-color {
+            &.border {
+              opacity: 1;
+            }
+          }
+
+          .theme-color-card-label {
+            color: if($bar-menus-monochrome, $bar-menus-iconbuttons-active, $bar-menus-iconbuttons-active);
+          }
+        }
+      }
+    }
+  }
+}

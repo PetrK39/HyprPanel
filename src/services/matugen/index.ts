@@ -5,6 +5,9 @@ import { bash, dependencies, Notify, isAnImage } from '../../lib/utils';
 import options from '../../options';
 import icons from '../../lib/icons/icons';
 import Variable from 'astal/variable';
+import { normalizePath } from 'src/lib/utils.js';
+import Wallpaper from '../Wallpaper.ts';
+
 const { scheme_type, contrast } = options.theme.matugen_settings;
 const { matugen } = options.theme;
 
@@ -12,7 +15,46 @@ const updateOptColor = (color: HexColor, opt: Variable<HexColor>): void => {
     opt.set(color);
 };
 
-export async function generateMatugenColors(): Promise<MatugenColors | undefined> {
+export const matugenColors = new Variable<MatugenColors | undefined>(undefined);
+
+export async function initializeMatugenUpdate(): Promise<void> {
+    matugen.subscribe(() => {
+        const wallpaperPath = options.wallpaper.image.get();
+
+        if (matugen.get() && (!wallpaperPath.length || !isAnImage(normalizePath(wallpaperPath)))) {
+            Notify({
+                summary: 'Matugen Failed',
+                body: "Please select a wallpaper in 'Theming > General' first.",
+                iconName: icons.ui.warning,
+            });
+            matugen.set(false);
+        }
+    });
+
+    Wallpaper.connect('changed', async () => {
+        console.info('Wallpaper changed, regenerating Matugen colors...');
+        matugenColors.set(await generateMatugenColors());
+    });
+
+    options.wallpaper.image.subscribe(async () => {
+        if (!Wallpaper.isRunning() || !options.wallpaper.enable.get()) {
+            console.info('Wallpaper path changed, regenerating Matugen colors...');
+            matugenColors.set(await generateMatugenColors());
+        }
+
+        if (options.wallpaper.pywal.get() && dependencies('wal')) {
+            await bash(`wal -i ${options.wallpaper.image.get()}`);
+        }
+    });
+
+    options.handler(['theme'], async () => {
+        matugenColors.set(await generateMatugenColors());
+    });
+
+    matugenColors.set(await generateMatugenColors());
+}
+
+async function generateMatugenColors(): Promise<MatugenColors | undefined> {
     if (!matugen.get() || !dependencies('matugen')) {
         return;
     }

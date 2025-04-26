@@ -1,0 +1,74 @@
+$elevation_margin: 0;
+
+
+.overview-search-box {
+  //@include element_decel;
+  //@include large-rounding;
+  //@include elevation-border;
+  //@include elevation2;
+  min-width: 15em;
+  min-height: 3em;
+  padding: 0 3em 0 1em;
+  background-color: $overview-background;
+  color: $overview-foreground;
+
+  caret-color: transparent;
+}
+
+.overview-search-box-extended {
+  min-width: 15em;
+}
+
+.overview-search-prompt {
+  color: $overview-search_prompt;
+}
+
+.overview-search-icon {
+  font-family: "Material Symbols Rounded", "MaterialSymbolsRounded", "Material Symbols Outlined", "Material Symbols Sharp";
+  font-size: 2em * $overview-scaling * 0.01;
+}
+
+.overview-search-prompt-box {
+  margin-left: -20em;
+  margin-right: 0.5em;
+}
+
+.overview-search-icon-box {
+  margin-left: -20em;
+  margin-right: 0.5em;
+}
+
+.overview-search-results {
+  min-width: 16em;
+  padding: 0 3em 0 0;
+  background-color: $overview-background;
+}
+
+.overview-search-results-icon {
+  font-family: "Material Symbols Rounded", "MaterialSymbolsRounded", "Material Symbols Outlined", "Material Symbols Sharp";
+  font-size: 1.85em * $overview-scaling * 0.01;
+  margin-right: -1em;
+  padding-right: 2em;
+}
+
+.overview-search-results-txt {
+  //margin-right: 0.682rem;
+}
+
+.overview-search-results-txt-cmd {
+  margin-right: -2em;
+}
+
+.overview-search-result-btn {
+  //@include normal-rounding;
+  padding: 0.341rem;
+  min-width: 2.386rem;
+  min-height: 2.386rem;
+
+  caret-color: transparent;
+}
+
+.overview-search-result-btn:hover,
+.overview-search-result-btn:focus {
+  color: $overview-foreground;
+}
