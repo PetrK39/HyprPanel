@@ -1,12 +1,12 @@
 import { ColorMap } from './index.tsx';
 import { Gtk, Widget } from 'astal/gtk3';
-import { execAsync, GLib } from 'astal';
+import { AstalIO, execAsync, timeout } from 'astal';
 import { HexColor } from 'src/lib/types/options';
 
 const COPY_LABEL_DELAY = 2000;
 
 const ColorCard = ({ color }: ColorCardProps): JSX.Element => {
-    let timer: GLib.Source | null = null;
+    let timer: AstalIO.Time | null = null;
 
     const copyRoutine = async (value: string): Promise<void> => {
         console.log('copyRoutine0', value);
@@ -19,12 +19,12 @@ const ColorCard = ({ color }: ColorCardProps): JSX.Element => {
         labelButton.set_label('copied');
         labelButton.toggleClassName('copied', true);
 
-        if (timer && !timer.is_destroyed()) timer.destroy();
+        if (timer) timer.cancel();
 
-        timer = setTimeout(() => {
+        timer = timeout(COPY_LABEL_DELAY, () => {
             labelButton.set_label(color.key);
             labelButton.toggleClassName('copied', false);
-        }, COPY_LABEL_DELAY);
+        });
     };
 
     const colorButton = (

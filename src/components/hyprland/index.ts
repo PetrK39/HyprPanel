@@ -1,8 +1,10 @@
-import { hyprlandService } from '../../lib/constants/services.ts';
 import { execAsync, Variable } from 'astal';
 import options from '../../options.ts';
 import { matugenColors, replaceHexValues } from '../../services/matugen';
 import { isHexColor } from '../../globals/variables.ts';
+
+import AstalHyprland from 'gi://AstalHyprland?version=0.1';
+const hyprland = AstalHyprland.get_default();
 
 const {
     enabled,
@@ -119,7 +121,7 @@ const hyprlandIntegration = (): void => {
         );
     };
 
-    hyprlandService.connect('config-reloaded', directApply);
+    hyprland.connect('config-reloaded', directApply);
     matugenColors.subscribe(directApply);
 };
 

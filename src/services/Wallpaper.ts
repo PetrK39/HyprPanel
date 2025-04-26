@@ -4,6 +4,9 @@ import options from '../options';
 import { execAsync } from 'astal/process';
 import { monitorFile } from 'astal/file';
 
+import AstalHyprland from 'gi://AstalHyprland?version=0.1';
+const hyprland = AstalHyprland.get_default();
+
 const WP = `${GLib.get_home_dir()}/.config/background`;
 
 @register({ GTypeName: 'Wallpaper' })
@@ -15,7 +18,7 @@ class Wallpaper extends GObject.Object {
         if (!dependencies('swww')) return;
 
         try {
-            const cursorPosition = hyprlandService.message('cursorpos');
+            const cursorPosition = hyprland.message('cursorpos');
             const transitionCmd = [
                 'swww',
                 'img',

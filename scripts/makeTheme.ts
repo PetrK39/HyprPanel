@@ -21,8 +21,8 @@
  *   ts-node makeTheme.ts theme.json updatedTheme.json --vivid
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Prints the usage/help text.
@@ -138,8 +138,7 @@ function makeBaseTheme(data: Record<string, unknown>): void {
         const hasTot = Object.prototype.hasOwnProperty.call(props, 'total');
         if (!hasTxt && !hasTot) continue;
 
-        const value = hasTxt ? props['text'] : props['total'];
-        props['icon'] = value;
+        props['icon'] = hasTxt ? props['text'] : props['total'];
     }
 
     for (const name of Object.keys(grouped)) {

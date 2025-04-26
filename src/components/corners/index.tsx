@@ -1,7 +1,9 @@
 import { App, Astal, Widget } from 'astal/gtk3';
 import { bind, Binding, Variable } from 'astal';
-import { hyprlandService } from 'src/lib/constants/services';
 import options from 'src/options.js';
+
+import AstalHyprland from 'gi://AstalHyprland?version=0.1';
+const hyprland = AstalHyprland.get_default();
 
 interface CornersWindowProps {
     monitor: number;
@@ -52,26 +54,26 @@ const CornersWindow = ({
     return window;
 };
 
-export const ScreenCorners = (monitor: number): JSX.Element => (
+export const ScreenCorners = async (monitor: number): Promise<JSX.Element> => (
     <CornersWindow monitor={monitor} name={'screencorners'} visible={bind(options.corners.enable_screen)} />
 );
 
-export const BarCorners = (monitor: number): JSX.Element => {
+export const BarCorners = async (monitor: number): Promise<JSX.Element> => {
     // I don't use bar autoHide, so skip that for now
 
     const marginTop = Variable(0);
     const marginBottom = Variable(0);
 
     const updateMargins = (): void => {
-        hyprlandService.sync_monitors((hyprland, res) => {
-            if (hyprland) {
-                const mon = hyprland.get_monitor(monitor);
+        hyprland.sync_monitors((hyprland_sync, res) => {
+            if (hyprland_sync) {
+                const mon = hyprland_sync.get_monitor(monitor);
 
                 // bottom is top, right is bottom. Don't ask, IDK
                 marginTop.set(mon.reservedBottom);
                 marginBottom.set(mon.reservedRight);
+                hyprland_sync.sync_monitors_finish(res);
             }
-            hyprlandService.sync_monitors_finish(res);
         });
     };
 

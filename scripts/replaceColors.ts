@@ -56,11 +56,7 @@ function buildColorMap(original: Palette, updated: Palette): ColorMap {
             const newNested = newVal && typeof newVal === 'object' ? (newVal as Record<string, string>) : {};
 
             for (const [nestedKey, nestedOldHex] of Object.entries(oldNested)) {
-                const nestedNewHex = newNested[nestedKey];
-
-                if (typeof nestedOldHex === 'string' && typeof nestedNewHex === 'string') {
-                    map[nestedOldHex.toLowerCase()] = nestedNewHex;
-                }
+                map[nestedOldHex.toLowerCase()] = newNested[nestedKey];
             }
         }
     }

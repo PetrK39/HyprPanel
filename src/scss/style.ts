@@ -1,13 +1,13 @@
 import options from '../options';
 import { bash, dependencies } from '../lib/utils';
-import { HexColor, MatugenColors, RecursiveOptionsObject } from '../lib/types/options';
+import { MatugenColors, RecursiveOptionsObject } from '../lib/types/options';
 import { initializeMatugenUpdate, matugenColors, replaceHexValues } from '../services/matugen';
 import { isHexColor } from '../globals/variables';
 import { readFile, writeFile } from 'astal/file';
 import { App } from 'astal/gtk3';
 import { initializeHotReload } from './utils/hotReload';
 
-const deps = ['font', 'bar.flatButtons', 'bar.position', 'bar.battery.charging', 'bar.battery.blocks'];
+const deps = ['font', 'theme', 'bar.flatButtons', 'bar.position', 'bar.battery.charging', 'bar.battery.blocks'];
 
 function extractVariables(theme: RecursiveOptionsObject, prefix = '', matugenColors?: MatugenColors): string[] {
     let result = [] as string[];
@@ -39,38 +39,6 @@ function extractVariables(theme: RecursiveOptionsObject, prefix = '', matugenCol
     }
 
     return result;
-}
-
-async function extractMatugenizedVariables(matugenColors: MatugenColors): Promise<string[]> {
-    try {
-        const result = [] as string[];
-        const optArray = options.array();
-
-        for (let i = 0; i < optArray.length; i++) {
-            const opt = optArray[i];
-            const name = opt.id;
-
-            if (name.startsWith('theme.') === false) {
-                continue;
-            }
-
-            const value = opt.value;
-
-            if (!isHexColor(value) && matugenColors !== undefined) {
-                result.push(`$${name.replace('theme.', '').split('.').join('-')}: ${value};`);
-                continue;
-            }
-
-            const matugenColor = getMatugenHex(value as HexColor, matugenColors);
-
-            result.push(`$${name.replace('theme.', '').split('.').join('-')}: ${matugenColor};`);
-        }
-
-        return result;
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
 }
 
 export const resetCss = async (): Promise<void> => {

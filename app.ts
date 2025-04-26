@@ -61,7 +61,7 @@ App.start({
         Notifications();
         OSD();
 
-        forMonitors(Bar).forEach((bar: JSX.Element) => bar);
+        forMonitors(Bar);
         forMonitors(ScreenCorners);
         forMonitors(BarCorners);
 
