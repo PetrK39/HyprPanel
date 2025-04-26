@@ -8,7 +8,13 @@ export const BarGeneral = (): JSX.Element => {
         <scrollable name={'General'} className="bar-theme-page paged-container" vscroll={Gtk.PolicyType.AUTOMATIC}>
             <box vertical>
                 <Header title="General Settings" />
-                <Option opt={options.theme.font.name} title="Font" type="font" />
+                <Option
+                    opt={options.theme.font.name}
+                    fontLabel={options.theme.font.label}
+                    fontStyle={options.theme.font.style}
+                    title="Font"
+                    type="font"
+                />
                 <Option opt={options.theme.font.size} title="Font Size" type="string" />
                 <Option
                     opt={options.theme.font.weight}
@@ -24,7 +30,7 @@ export const BarGeneral = (): JSX.Element => {
                     title="Config"
                     subtitle="WARNING: Importing a configuration will replace your current configuration settings."
                     type="config_import"
-                    exportData={{ filePath: CONFIG, themeOnly: false }}
+                    exportData={{ filePath: CONFIG_FILE, themeOnly: false }}
                 />
                 <Option
                     opt={options.hyprpanel.restartAgs}
@@ -58,6 +64,19 @@ export const BarGeneral = (): JSX.Element => {
                     min={0}
                     max={10000}
                     increment={25}
+                />
+                <Option opt={options.theme.bar.menus.enableShadow} title="Enable Shadow" type="boolean" />
+                <Option
+                    opt={options.theme.bar.menus.shadow}
+                    title="Menu Shadow"
+                    subtitle="Requires that sufficient margins have been set to house the shadow."
+                    type="string"
+                />
+                <Option
+                    opt={options.theme.bar.menus.shadowMargins}
+                    title="Menu Shadow Margins"
+                    subtitle="Margins count mouse events as clicks 'inside' the menu."
+                    type="string"
                 />
 
                 <Header title="Scaling" />

@@ -3,9 +3,9 @@ import { Variable } from 'types/variable';
 import { defaultColorMap } from './defaults/options';
 import { Astal } from 'astal/gtk3';
 import { dropdownMenuList } from '../constants/options';
+import { FontStyle } from 'src/components/settings/shared/inputs/font/utils';
 
 export type MkOptionsResult = {
-    configFile: string;
     array: () => Opt[];
     reset: () => Promise<string>;
     handler: (deps: string[], callback: () => void) => void;
@@ -47,7 +47,8 @@ export type BarModule =
     | 'power'
     | 'systray'
     | 'hypridle'
-    | 'hyprsunset';
+    | 'hyprsunset'
+    | 'cava';
 
 export type BarLayout = {
     left: BarModule[];
@@ -104,6 +105,8 @@ export interface RowProps<T> {
     subtitleLink?: string;
     dependencies?: string[];
     increment?: number;
+    fontStyle?: Opt<FontStyle>;
+    fontLabel?: Opt<string>;
 }
 
 export type OSDOrientation = 'horizontal' | 'vertical';

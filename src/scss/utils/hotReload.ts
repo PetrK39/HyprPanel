@@ -3,6 +3,7 @@ import { resetCss } from '../style';
 
 export const initializeHotReload = (): void => {
     const monitorList = [
+        `${SRC_DIR}/src/scss/main.scss`,
         `${SRC_DIR}/src/scss/style/bar`,
         `${SRC_DIR}/src/scss/style/common`,
         `${SRC_DIR}/src/scss/style/menus`,
@@ -11,6 +12,7 @@ export const initializeHotReload = (): void => {
         `${SRC_DIR}/src/scss/style/settings`,
         `${SRC_DIR}/src/scss/style/colors.scss`,
         `${SRC_DIR}/src/scss/style/highlights.scss`,
+        `${CONFIG_DIR}/modules.scss`,
     ];
 
     monitorList.forEach((file) => monitorFile(file, resetCss));

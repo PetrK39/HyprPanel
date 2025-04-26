@@ -3,7 +3,7 @@ import { DropdownMenuProps } from 'src/lib/types/dropdownmenu';
 import { BarEventMargins } from './eventBoxes/index';
 import { globalEventBoxes } from 'src/globals/dropdown';
 import { bind } from 'astal';
-import { App, Astal, Gdk } from 'astal/gtk3';
+import { App, Astal, Gdk, Gtk } from 'astal/gtk3';
 import { Revealer } from 'astal/gtk3/widget';
 import { locationMap } from 'src/lib/types/defaults/bar';
 
@@ -81,20 +81,14 @@ export default ({
                             <revealer
                                 revealChild={false}
                                 setup={(self: Revealer) => {
-                                    App.connect('window-toggled', (app) => {
-                                        const targetWindow = app.get_window(name);
-
-                                        const visibility = targetWindow?.get_visible();
-
-                                        if (targetWindow?.name === name) {
-                                            self.set_reveal_child(visibility ?? false);
-                                        }
+                                    App.connect('window-toggled', (_, window) => {
+                                        self.set_reveal_child(window.visible);
                                     });
                                 }}
                                 transitionType={transition}
                                 transitionDuration={bind(options.menus.transitionTime)}
                             >
-                                <box className="dropdown-menu-container" canFocus>
+                                <box className="dropdown-content" halign={Gtk.Align.CENTER} expand canFocus>
                                     {child}
                                 </box>
                             </revealer>

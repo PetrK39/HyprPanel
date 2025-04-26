@@ -6,13 +6,11 @@ import { filterNotifications } from 'src/lib/shared/notifications.js';
 import { BarBoxChild } from 'src/lib/types/bar.js';
 import { runAsyncCommand, throttledScrollHandler } from 'src/components/bar/utils/helpers.js';
 import { bind, Variable } from 'astal';
-import { useHook } from 'src/lib/shared/hookHandler';
 import { onMiddleClick, onPrimaryClick, onScroll, onSecondaryClick } from 'src/lib/shared/eventHandlers';
 
+const notifdService = AstalNotifd.get_default();
 const { show_total, rightClick, middleClick, scrollUp, scrollDown, hideCountWhenZero } = options.bar.notifications;
 const { ignore } = options.notifications;
-
-const notifs = AstalNotifd.get_default();
 
 export const Notifications = (): BarBoxChild => {
     const componentClassName = Variable.derive(
@@ -30,8 +28,8 @@ export const Notifications = (): BarBoxChild => {
 
     const boxChildren = Variable.derive(
         [
-            bind(notifs, 'notifications'),
-            bind(notifs, 'dontDisturb'),
+            bind(notifdService, 'notifications'),
+            bind(notifdService, 'dontDisturb'),
             bind(show_total),
             bind(ignore),
             bind(hideCountWhenZero),
@@ -45,7 +43,7 @@ export const Notifications = (): BarBoxChild => {
         ) => {
             const filteredNotifications = filterNotifications(notif, ignoredNotifs);
 
-            const notifIcon = (
+            const NotifIcon = (): JSX.Element => (
                 <label
                     halign={Gtk.Align.CENTER}
                     className={'bar-button-icon notifications txt-icon bar'}
@@ -53,7 +51,7 @@ export const Notifications = (): BarBoxChild => {
                 />
             );
 
-            const notifLabel = (
+            const NotifLabel = (): JSX.Element => (
                 <label
                     halign={Gtk.Align.CENTER}
                     className={'bar-button-label notifications'}
@@ -63,11 +61,16 @@ export const Notifications = (): BarBoxChild => {
 
             if (showTotal) {
                 if (hideCountForZero && filteredNotifications.length === 0) {
-                    return [notifIcon];
+                    return <NotifIcon />;
                 }
-                return [notifIcon, notifLabel];
+                return (
+                    <box>
+                        <NotifIcon />
+                        <NotifLabel />
+                    </box>
+                );
             }
-            return [notifIcon];
+            return <NotifIcon />;
         },
     );
 
@@ -85,30 +88,43 @@ export const Notifications = (): BarBoxChild => {
         boxClass: 'notifications',
         props: {
             setup: (self: Astal.Button): void => {
-                useHook(self, options.bar.scrollSpeed, () => {
-                    const throttledHandler = throttledScrollHandler(options.bar.scrollSpeed.get());
+                let disconnectFunctions: (() => void)[] = [];
 
-                    const disconnectPrimary = onPrimaryClick(self, (clicked, event) => {
-                        openMenu(clicked, event, 'notificationsmenu');
-                    });
+                Variable.derive(
+                    [
+                        bind(rightClick),
+                        bind(middleClick),
+                        bind(scrollUp),
+                        bind(scrollDown),
+                        bind(options.bar.scrollSpeed),
+                    ],
+                    () => {
+                        disconnectFunctions.forEach((disconnect) => disconnect());
+                        disconnectFunctions = [];
 
-                    const disconnectSecondary = onSecondaryClick(self, (clicked, event) => {
-                        runAsyncCommand(rightClick.get(), { clicked, event });
-                    });
+                        const throttledHandler = throttledScrollHandler(options.bar.scrollSpeed.get());
 
-                    const disconnectMiddle = onMiddleClick(self, (clicked, event) => {
-                        runAsyncCommand(middleClick.get(), { clicked, event });
-                    });
+                        disconnectFunctions.push(
+                            onPrimaryClick(self, (clicked, event) => {
+                                openMenu(clicked, event, 'notificationsmenu');
+                            }),
+                        );
 
-                    const disconnectScroll = onScroll(self, throttledHandler, scrollUp.get(), scrollDown.get());
+                        disconnectFunctions.push(
+                            onSecondaryClick(self, (clicked, event) => {
+                                runAsyncCommand(rightClick.get(), { clicked, event });
+                            }),
+                        );
 
-                    return (): void => {
-                        disconnectPrimary();
-                        disconnectSecondary();
-                        disconnectMiddle();
-                        disconnectScroll();
-                    };
-                });
+                        disconnectFunctions.push(
+                            onMiddleClick(self, (clicked, event) => {
+                                runAsyncCommand(middleClick.get(), { clicked, event });
+                            }),
+                        );
+
+                        disconnectFunctions.push(onScroll(self, throttledHandler, scrollUp.get(), scrollDown.get()));
+                    },
+                );
             },
         },
     };

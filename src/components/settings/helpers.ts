@@ -16,7 +16,7 @@ export const themePages = [
     'System Tray',
     'Volume Menu',
     'Power Menu',
-    'Custom Modules',
+    'Basic Modules',
     'Corners',
     'Hyprland',
 ] as const;
@@ -30,7 +30,7 @@ export const configPages = [
     'Volume',
     'Clock Menu',
     'Dashboard Menu',
-    'Custom Modules',
+    'Basic Modules',
     'Power Menu',
     'Corners',
     'Hyprland',

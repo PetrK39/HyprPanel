@@ -1,6 +1,6 @@
 import options from '../options';
 import { bash, dependencies } from '../lib/utils';
-import { MatugenColors, RecursiveOptionsObject } from '../lib/types/options';
+import { HexColor, MatugenColors, RecursiveOptionsObject } from '../lib/types/options';
 import { initializeMatugenUpdate, matugenColors, replaceHexValues } from '../services/matugen';
 import { isHexColor } from '../globals/variables';
 import { readFile, writeFile } from 'astal/file';
@@ -41,6 +41,38 @@ function extractVariables(theme: RecursiveOptionsObject, prefix = '', matugenCol
     return result;
 }
 
+async function extractMatugenizedVariables(matugenColors: MatugenColors): Promise<string[]> {
+    try {
+        const result = [] as string[];
+        const optArray = options.array();
+
+        for (let i = 0; i < optArray.length; i++) {
+            const opt = optArray[i];
+            const name = opt.id;
+
+            if (name.startsWith('theme.') === false) {
+                continue;
+            }
+
+            const value = opt.value;
+
+            if (!isHexColor(value) && matugenColors !== undefined) {
+                result.push(`$${name.replace('theme.', '').split('.').join('-')}: ${value};`);
+                continue;
+            }
+
+            const matugenColor = getMatugenHex(value as HexColor, matugenColors);
+
+            result.push(`$${name.replace('theme.', '').split('.').join('-')}: ${matugenColor};`);
+        }
+
+        return result;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
 export const resetCss = async (): Promise<void> => {
     if (!dependencies('sass')) return;
 
@@ -51,6 +83,7 @@ export const resetCss = async (): Promise<void> => {
         const css = `${TMP}/main.css`;
         const scss = `${TMP}/entry.scss`;
         const localScss = `${SRC_DIR}/src/scss/main.scss`;
+        const moduleScss = `${CONFIG_DIR}/modules.scss`;
 
         const imports = [vars].map((f) => `@import '${f}';`);
 
@@ -58,6 +91,9 @@ export const resetCss = async (): Promise<void> => {
 
         let mainScss = readFile(localScss);
         mainScss = `${imports}\n${mainScss}`;
+
+        const moduleScssFile = readFile(moduleScss);
+        mainScss = `${mainScss}\n${moduleScssFile}`;
 
         writeFile(scss, mainScss);
 

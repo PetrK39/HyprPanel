@@ -1,23 +1,22 @@
-import { bluetoothService } from 'src/lib/constants/services.js';
 import options from 'src/options.js';
 import { openMenu } from '../../utils/menu.js';
 import { BarBoxChild } from 'src/lib/types/bar.js';
 import { runAsyncCommand, throttledScrollHandler } from 'src/components/bar/utils/helpers.js';
-import { bind } from 'astal/binding.js';
-import Variable from 'astal/variable.js';
-import { useHook } from 'src/lib/shared/hookHandler.js';
+import { Variable, bind } from 'astal';
 import { onMiddleClick, onPrimaryClick, onScroll, onSecondaryClick } from 'src/lib/shared/eventHandlers.js';
 import AstalBluetooth from 'gi://AstalBluetooth?version=0.1';
 import { Astal } from 'astal/gtk3';
 
+const bluetoothService = AstalBluetooth.get_default();
+
 const { rightClick, middleClick, scrollDown, scrollUp } = options.bar.bluetooth;
 
 const Bluetooth = (): BarBoxChild => {
-    const btIcon = (isPowered: boolean): JSX.Element => (
+    const BluetoothIcon = ({ isPowered }: BluetoothIconProps): JSX.Element => (
         <label className={'bar-button-icon bluetooth txt-icon bar'} label={isPowered ? '󰂯' : '󰂲'} />
     );
 
-    const btText = (isPowered: boolean, devices: AstalBluetooth.Device[]): JSX.Element => {
+    const BluetoothLabel = ({ isPowered, devices }: BluetoothLabelProps): JSX.Element => {
         const connectDevices = devices.filter((device) => device.connected);
 
         const label =
@@ -40,12 +39,24 @@ const Bluetooth = (): BarBoxChild => {
     );
 
     const componentBinding = Variable.derive(
-        [bind(options.bar.bluetooth.label), bind(bluetoothService, 'isPowered'), bind(bluetoothService, 'devices')],
-        (showLabel: boolean, isPowered: boolean, devices: AstalBluetooth.Device[]): JSX.Element[] => {
+        [
+            bind(options.bar.bluetooth.label),
+            bind(bluetoothService, 'isPowered'),
+            bind(bluetoothService, 'devices'),
+
+            bind(bluetoothService, 'isConnected'),
+        ],
+        (showLabel: boolean, isPowered: boolean, devices: AstalBluetooth.Device[]): JSX.Element => {
             if (showLabel) {
-                return [btIcon(isPowered), btText(isPowered, devices)];
+                return (
+                    <box>
+                        <BluetoothIcon isPowered={isPowered} />
+                        <BluetoothLabel isPowered={isPowered} devices={devices} />
+                    </box>
+                );
             }
-            return [btIcon(isPowered)];
+
+            return <BluetoothIcon isPowered={isPowered} />;
         },
     );
 
@@ -57,30 +68,43 @@ const Bluetooth = (): BarBoxChild => {
         boxClass: 'bluetooth',
         props: {
             setup: (self: Astal.Button): void => {
-                useHook(self, options.bar.scrollSpeed, () => {
-                    const throttledHandler = throttledScrollHandler(options.bar.scrollSpeed.get());
+                let disconnectFunctions: (() => void)[] = [];
 
-                    const disconnectPrimary = onPrimaryClick(self, (clicked, event) => {
-                        openMenu(clicked, event, 'bluetoothmenu');
-                    });
+                Variable.derive(
+                    [
+                        bind(rightClick),
+                        bind(middleClick),
+                        bind(scrollUp),
+                        bind(scrollDown),
+                        bind(options.bar.scrollSpeed),
+                    ],
+                    () => {
+                        disconnectFunctions.forEach((disconnect) => disconnect());
+                        disconnectFunctions = [];
 
-                    const disconnectSecondary = onSecondaryClick(self, (clicked, event) => {
-                        runAsyncCommand(rightClick.get(), { clicked, event });
-                    });
+                        const throttledHandler = throttledScrollHandler(options.bar.scrollSpeed.get());
 
-                    const disconnectMiddle = onMiddleClick(self, (clicked, event) => {
-                        runAsyncCommand(middleClick.get(), { clicked, event });
-                    });
+                        disconnectFunctions.push(
+                            onPrimaryClick(self, (clicked, event) => {
+                                openMenu(clicked, event, 'bluetoothmenu');
+                            }),
+                        );
 
-                    const disconnectScroll = onScroll(self, throttledHandler, scrollUp.get(), scrollDown.get());
+                        disconnectFunctions.push(
+                            onSecondaryClick(self, (clicked, event) => {
+                                runAsyncCommand(rightClick.get(), { clicked, event });
+                            }),
+                        );
 
-                    return (): void => {
-                        disconnectPrimary();
-                        disconnectSecondary();
-                        disconnectMiddle();
-                        disconnectScroll();
-                    };
-                });
+                        disconnectFunctions.push(
+                            onMiddleClick(self, (clicked, event) => {
+                                runAsyncCommand(middleClick.get(), { clicked, event });
+                            }),
+                        );
+
+                        disconnectFunctions.push(onScroll(self, throttledHandler, scrollUp.get(), scrollDown.get()));
+                    },
+                );
             },
             onDestroy: (): void => {
                 componentClassName.drop();
@@ -89,5 +113,14 @@ const Bluetooth = (): BarBoxChild => {
         },
     };
 };
+
+interface BluetoothIconProps {
+    isPowered: boolean;
+}
+
+interface BluetoothLabelProps {
+    isPowered: boolean;
+    devices: AstalBluetooth.Device[];
+}
 
 export { Bluetooth };

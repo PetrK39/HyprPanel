@@ -7,6 +7,9 @@ import './src/globals/dropdown';
 import './src/globals/utilities';
 import './src/components/bar/utils/sideEffects';
 
+import AstalHyprland from 'gi://AstalHyprland?version=0.1';
+const hyprland = AstalHyprland.get_default();
+
 import { Bar } from './src/components/bar';
 import { DropdownMenus, StandardWindows } from './src/components/menus/exports';
 import Notifications from './src/components/notifications';
@@ -15,8 +18,7 @@ import { bash, forMonitors } from 'src/lib/utils';
 import options from 'src/options';
 import OSD from 'src/components/osd/index';
 import { App } from 'astal/gtk3';
-import { exec, execAsync } from 'astal';
-import { hyprlandService } from 'src/lib/constants/services';
+import { execAsync } from 'astal';
 import { handleRealization } from 'src/components/menus/shared/dropdown/helpers';
 import { isDropdownMenu } from 'src/lib/constants/options.js';
 import { initializeSystemBehaviors } from 'src/lib/behaviors';
@@ -53,7 +55,7 @@ App.start({
     requestHandler(request: string, res: (response: unknown) => void) {
         runCLI(request, res);
     },
-    main() {
+    async main() {
         initializeStartupScripts();
 
         Notifications();
@@ -71,44 +73,10 @@ App.start({
     },
 });
 
-/**
- * Function to determine if the current OS is NixOS by parsing /etc/os-release.
- * @returns True if NixOS, false otherwise.
- */
-const isNixOS = (): boolean => {
-    try {
-        const osRelease = exec('cat /etc/os-release').toString();
-        const idMatch = osRelease.match(/^ID\s*=\s*"?([^"\n]+)"?/m);
+hyprland.connect('monitor-added', () => {
+    const { restartCommand } = options.hyprpanel;
 
-        if (idMatch && idMatch[1].toLowerCase() === 'nixos') {
-            return true;
-        }
-
-        return false;
-    } catch (error) {
-        console.error('Error detecting OS:', error);
-        return false;
-    }
-};
-
-/**
- * Function to generate the appropriate restart command based on the OS.
- * @returns The modified or original restart command.
- */
-const getRestartCommand = (): string => {
-    const isNix = isNixOS();
-    const command = options.hyprpanel.restartCommand.get();
-
-    if (isNix) {
-        return command.replace(/\bags\b/g, 'hyprpanel');
-    }
-
-    return command;
-};
-
-hyprlandService.connect('monitor-added', () => {
     if (options.hyprpanel.restartAgs.get()) {
-        const restartAgsCommand = getRestartCommand();
-        bash(restartAgsCommand);
+        bash(restartCommand.get());
     }
 });

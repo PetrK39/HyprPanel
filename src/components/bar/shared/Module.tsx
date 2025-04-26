@@ -5,32 +5,34 @@ import options from 'src/options';
 
 const { style } = options.theme.bar.buttons;
 
-const undefinedVar = Variable(undefined);
-
 export const Module = ({
     icon,
     textIcon,
     useTextIcon = bind(Variable(false)),
     label,
-    tooltipText,
+    truncationSize = bind(Variable(-1)),
+    tooltipText = '',
     boxClass,
     isVis,
     props = {},
-    showLabelBinding = bind(undefinedVar),
+    showLabelBinding = bind(Variable(true)),
+    showIconBinding = bind(Variable(true)),
     showLabel,
     labelHook,
     hook,
 }: BarModule): BarBoxChild => {
     const getIconWidget = (useTxtIcn: boolean): JSX.Element | undefined => {
-        let iconWidget: JSX.Element | undefined;
+        const className = `txt-icon bar-button-icon module-icon ${boxClass}`;
 
-        if (icon !== undefined && !useTxtIcn) {
-            iconWidget = <icon className={`txt-icon bar-button-icon module-icon ${boxClass}`} icon={icon} />;
-        } else if (textIcon !== undefined) {
-            iconWidget = <label className={`txt-icon bar-button-icon module-icon ${boxClass}`} label={textIcon} />;
+        const icn = typeof icon === 'string' ? icon : icon?.get();
+        if (!useTxtIcn && icn?.length) {
+            return <icon className={className} icon={icon} />;
         }
 
-        return iconWidget;
+        const textIcn = typeof textIcon === 'string' ? textIcon : textIcon?.get();
+        if (textIcn?.length) {
+            return <label className={className} label={textIcon} />;
+        }
     };
 
     const componentClass = Variable.derive(
@@ -48,12 +50,12 @@ export const Module = ({
     );
 
     const componentChildren = Variable.derive(
-        [showLabelBinding, useTextIcon],
-        (showLabel: boolean, forceTextIcon: boolean): JSX.Element[] => {
+        [showLabelBinding, showIconBinding, useTextIcon],
+        (showLabel: boolean, showIcon: boolean, forceTextIcon: boolean): JSX.Element[] => {
             const childrenArray = [];
             const iconWidget = getIconWidget(forceTextIcon);
 
-            if (iconWidget !== undefined) {
+            if (showIcon && iconWidget !== undefined) {
                 childrenArray.push(iconWidget);
             }
 
@@ -61,6 +63,8 @@ export const Module = ({
                 childrenArray.push(
                     <label
                         className={`bar-button-label module-label ${boxClass}`}
+                        truncate={truncationSize.as((truncSize) => truncSize > 0)}
+                        maxWidthChars={truncationSize.as((truncSize) => truncSize)}
                         label={label ?? ''}
                         setup={labelHook}
                     />,

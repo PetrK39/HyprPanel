@@ -3,7 +3,6 @@ import options from 'src/options';
 import { BarBoxChild } from 'src/lib/types/bar.js';
 import { runAsyncCommand, throttledScrollHandler } from 'src/components/bar/utils/helpers.js';
 import { bind, Variable } from 'astal';
-import { useHook } from 'src/lib/shared/hookHandler';
 import { onMiddleClick, onPrimaryClick, onScroll, onSecondaryClick } from 'src/lib/shared/eventHandlers';
 import { Astal } from 'astal/gtk3';
 import { systemTime } from 'src/globals/time';
@@ -14,8 +13,8 @@ const { style } = options.theme.bar.buttons;
 const time = Variable.derive([systemTime, format], (c, f) => c.format(f) || '');
 
 const Clock = (): BarBoxChild => {
-    const clockTime = <label className={'bar-button-label clock bar'} label={bind(time)} />;
-    const clockIcon = <label className={'bar-button-icon clock txt-icon bar'} label={bind(icon)} />;
+    const ClockTime = (): JSX.Element => <label className={'bar-button-label clock bar'} label={bind(time)} />;
+    const ClockIcon = (): JSX.Element => <label className={'bar-button-icon clock txt-icon bar'} label={bind(icon)} />;
 
     const componentClassName = Variable.derive(
         [bind(style), bind(showIcon), bind(showTime)],
@@ -32,11 +31,16 @@ const Clock = (): BarBoxChild => {
 
     const componentChildren = Variable.derive([bind(showIcon), bind(showTime)], (shIcn, shTm) => {
         if (shIcn && !shTm) {
-            return [clockIcon];
+            return <ClockIcon />;
         } else if (shTm && !shIcn) {
-            return [clockTime];
+            return <ClockTime />;
         }
-        return [clockIcon, clockTime];
+        return (
+            <box>
+                <ClockIcon />
+                <ClockTime />
+            </box>
+        );
     });
 
     const component = (
@@ -57,30 +61,43 @@ const Clock = (): BarBoxChild => {
         boxClass: 'clock',
         props: {
             setup: (self: Astal.Button): void => {
-                useHook(self, options.bar.scrollSpeed, () => {
-                    const throttledHandler = throttledScrollHandler(options.bar.scrollSpeed.get());
+                let disconnectFunctions: (() => void)[] = [];
 
-                    const disconnectPrimary = onPrimaryClick(self, (clicked, event) => {
-                        openMenu(clicked, event, 'calendarmenu');
-                    });
+                Variable.derive(
+                    [
+                        bind(rightClick),
+                        bind(middleClick),
+                        bind(scrollUp),
+                        bind(scrollDown),
+                        bind(options.bar.scrollSpeed),
+                    ],
+                    () => {
+                        disconnectFunctions.forEach((disconnect) => disconnect());
+                        disconnectFunctions = [];
 
-                    const disconnectSecondary = onSecondaryClick(self, (clicked, event) => {
-                        runAsyncCommand(rightClick.get(), { clicked, event });
-                    });
+                        const throttledHandler = throttledScrollHandler(options.bar.scrollSpeed.get());
 
-                    const disconnectMiddle = onMiddleClick(self, (clicked, event) => {
-                        runAsyncCommand(middleClick.get(), { clicked, event });
-                    });
+                        disconnectFunctions.push(
+                            onPrimaryClick(self, (clicked, event) => {
+                                openMenu(clicked, event, 'calendarmenu');
+                            }),
+                        );
 
-                    const disconnectScroll = onScroll(self, throttledHandler, scrollUp.get(), scrollDown.get());
+                        disconnectFunctions.push(
+                            onSecondaryClick(self, (clicked, event) => {
+                                runAsyncCommand(rightClick.get(), { clicked, event });
+                            }),
+                        );
 
-                    return (): void => {
-                        disconnectPrimary();
-                        disconnectSecondary();
-                        disconnectMiddle();
-                        disconnectScroll();
-                    };
-                });
+                        disconnectFunctions.push(
+                            onMiddleClick(self, (clicked, event) => {
+                                runAsyncCommand(middleClick.get(), { clicked, event });
+                            }),
+                        );
+
+                        disconnectFunctions.push(onScroll(self, throttledHandler, scrollUp.get(), scrollDown.get()));
+                    },
+                );
             },
         },
     };

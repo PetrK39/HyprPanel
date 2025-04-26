@@ -1,24 +1,25 @@
-import { audioService } from 'src/lib/constants/services.js';
 import { openMenu } from '../../utils/menu.js';
 import options from 'src/options';
 import { runAsyncCommand, throttledScrollHandler } from 'src/components/bar/utils/helpers.js';
-import Variable from 'astal/variable.js';
-import { bind } from 'astal/binding.js';
-import { useHook } from 'src/lib/shared/hookHandler.js';
+import { bind, Variable } from 'astal';
 import { onMiddleClick, onPrimaryClick, onScroll, onSecondaryClick } from 'src/lib/shared/eventHandlers.js';
 import { getIcon } from './helpers/index.js';
 import { BarBoxChild } from 'src/lib/types/bar.js';
 import { Astal } from 'astal/gtk3';
+import AstalWp from 'gi://AstalWp?version=0.1';
+
+const wireplumber = AstalWp.get_default() as AstalWp.Wp;
+const audioService = wireplumber?.audio;
 
 const { rightClick, middleClick, scrollUp, scrollDown } = options.bar.volume;
 
 const Volume = (): BarBoxChild => {
-    const volumeIcon = (isMuted: boolean, vol: number): JSX.Element => {
-        return <label className={'bar-button-icon volume txt-icon bar'} label={getIcon(isMuted, vol)} />;
+    const VolumeIcon = ({ isMuted, volume }: VolumeIconProps): JSX.Element => {
+        return <label className={'bar-button-icon volume txt-icon bar'} label={getIcon(isMuted, volume)} />;
     };
 
-    const volumeLabel = (vol: number): JSX.Element => {
-        return <label className={'bar-button-label volume'} label={`${Math.round(vol * 100)}%`} />;
+    const VolumeLabel = ({ volume }: VolumeLabelProps): JSX.Element => {
+        return <label className={'bar-button-label volume'} label={`${Math.round(volume * 100)}%`} />;
     };
 
     const componentTooltip = Variable.derive(
@@ -51,9 +52,15 @@ const Volume = (): BarBoxChild => {
         ],
         (showLabel, vol, isMuted) => {
             if (showLabel) {
-                return [volumeIcon(isMuted, vol), volumeLabel(vol)];
+                return (
+                    <box>
+                        <VolumeIcon isMuted={isMuted} volume={vol} />
+                        <VolumeLabel volume={vol} />
+                    </box>
+                );
             }
-            return [volumeIcon(isMuted, vol)];
+
+            return <VolumeIcon isMuted={isMuted} volume={vol} />;
         },
     );
     const component = (
@@ -77,33 +84,55 @@ const Volume = (): BarBoxChild => {
         boxClass: 'volume',
         props: {
             setup: (self: Astal.Button): void => {
-                useHook(self, options.bar.scrollSpeed, () => {
-                    const throttledHandler = throttledScrollHandler(options.bar.scrollSpeed.get());
+                let disconnectFunctions: (() => void)[] = [];
 
-                    const disconnectPrimary = onPrimaryClick(self, (clicked, event) => {
-                        openMenu(clicked, event, 'audiomenu');
-                    });
+                Variable.derive(
+                    [
+                        bind(rightClick),
+                        bind(middleClick),
+                        bind(scrollUp),
+                        bind(scrollDown),
+                        bind(options.bar.scrollSpeed),
+                    ],
+                    () => {
+                        disconnectFunctions.forEach((disconnect) => disconnect());
+                        disconnectFunctions = [];
 
-                    const disconnectSecondary = onSecondaryClick(self, (clicked, event) => {
-                        runAsyncCommand(rightClick.get(), { clicked, event });
-                    });
+                        const throttledHandler = throttledScrollHandler(options.bar.scrollSpeed.get());
 
-                    const disconnectMiddle = onMiddleClick(self, (clicked, event) => {
-                        runAsyncCommand(middleClick.get(), { clicked, event });
-                    });
+                        disconnectFunctions.push(
+                            onPrimaryClick(self, (clicked, event) => {
+                                openMenu(clicked, event, 'audiomenu');
+                            }),
+                        );
 
-                    const disconnectScroll = onScroll(self, throttledHandler, scrollUp.get(), scrollDown.get());
+                        disconnectFunctions.push(
+                            onSecondaryClick(self, (clicked, event) => {
+                                runAsyncCommand(rightClick.get(), { clicked, event });
+                            }),
+                        );
 
-                    return (): void => {
-                        disconnectPrimary();
-                        disconnectSecondary();
-                        disconnectMiddle();
-                        disconnectScroll();
-                    };
-                });
+                        disconnectFunctions.push(
+                            onMiddleClick(self, (clicked, event) => {
+                                runAsyncCommand(middleClick.get(), { clicked, event });
+                            }),
+                        );
+
+                        disconnectFunctions.push(onScroll(self, throttledHandler, scrollUp.get(), scrollDown.get()));
+                    },
+                );
             },
         },
     };
 };
+
+interface VolumeIconProps {
+    isMuted: boolean;
+    volume: number;
+}
+
+interface VolumeLabelProps {
+    volume: number;
+}
 
 export { Volume };

@@ -1,3 +1,4 @@
+import { FontStyle } from './components/settings/shared/inputs/font/utils';
 import { opt, mkOptions } from './lib/option';
 import { NetstatLabelType, RateUnit, ResourceLabelType } from './lib/types/bar';
 import { KbLabelType } from './lib/types/customModules/kbLayout';
@@ -90,7 +91,7 @@ export const tertiary_colors = {
     surface2: '#585b71',
 };
 
-const options = mkOptions(CONFIG, {
+const options = mkOptions({
     theme: {
         tooltip: {
             scaling: opt(100),
@@ -105,6 +106,8 @@ const options = mkOptions(CONFIG, {
         font: {
             size: opt('1.2rem'),
             name: opt('Ubuntu Nerd Font'),
+            style: opt<FontStyle>('normal'),
+            label: opt('Ubuntu Nerd Font'),
             weight: opt(600),
         },
         notification: {
@@ -118,6 +121,9 @@ const options = mkOptions(CONFIG, {
             label: opt(colors.lavender),
             border: opt(secondary_colors.surface0),
             border_radius: opt('0.6em'),
+            enableShadow: opt(false),
+            shadow: opt('0px 1px 2px 1px #16161e'),
+            shadowMargins: opt('4px 4px'),
             time: opt(secondary_colors.overlay1),
             text: opt(colors.text),
             labelicon: opt(colors.lavender),
@@ -132,6 +138,10 @@ const options = mkOptions(CONFIG, {
             enable: opt(true),
             orientation: opt<OSDOrientation>('vertical'),
             opacity: opt(100),
+            border: {
+                size: opt('0em'),
+                color: opt(colors.lavender),
+            },
             bar_container: opt(colors.crust),
             icon_container: opt(tertiary_colors.lavender),
             bar_color: opt(tertiary_colors.lavender),
@@ -142,7 +152,9 @@ const options = mkOptions(CONFIG, {
             monitor: opt(0),
             active_monitor: opt(true),
             radius: opt('0.4em'),
-            margins: opt('0px 5px 0px 0px'),
+            margins: opt('7px 7px 7px 7px'),
+            enableShadow: opt(false),
+            shadow: opt('0px 0px 3px 2px #16161e'),
             location: opt<OSDAnchor>('right'),
             muted_zero: opt(false),
         },
@@ -153,6 +165,9 @@ const options = mkOptions(CONFIG, {
             layer: opt<WindowLayer>('top'),
             margin_top: opt('0.5em'),
             opacity: opt(100),
+            enableShadow: opt(false),
+            shadow: opt('0px 1px 2px 1px #16161e'),
+            shadowMargins: opt('0px 0px 4px 0px'),
             margin_bottom: opt('0em'),
             margin_sides: opt('0.5em'),
             border_radius: opt('0.4em'),
@@ -204,6 +219,7 @@ const options = mkOptions(CONFIG, {
                     hover: opt(colors.pink),
                     numbered_active_highlight_border: opt('0.2em'),
                     numbered_active_highlight_padding: opt('0.2em'),
+                    numbered_inactive_padding: opt('0.2em'),
                     numbered_active_highlighted_text_color: opt(colors.mantle),
                     numbered_active_underline_color: opt(colors.pink),
                     spacing: opt('0.5em'),
@@ -294,6 +310,11 @@ const options = mkOptions(CONFIG, {
                     total: opt(colors.lavender),
                     spacing: opt('0.5em'),
                 },
+                separator: {
+                    color: opt(colors.surface2),
+                    margins: opt('0.15em'),
+                    width: opt('0.1em'),
+                },
                 theme: {
                     enableBorder: opt(false),
                     border: opt(colors.pink),
@@ -301,6 +322,15 @@ const options = mkOptions(CONFIG, {
                     icon_background: opt(colors.base2),
                 },
                 modules: {
+                    microphone: {
+                        enableBorder: opt(false),
+                        border: opt(colors.green),
+                        background: opt(colors.base2),
+                        text: opt(colors.green),
+                        icon: opt(colors.green),
+                        icon_background: opt(colors.base2),
+                        spacing: opt('0.45em'),
+                    },
                     ram: {
                         enableBorder: opt(false),
                         border: opt(colors.yellow),
@@ -408,6 +438,24 @@ const options = mkOptions(CONFIG, {
                         icon_background: opt(colors.base2),
                         spacing: opt('0.45em'),
                     },
+                    cava: {
+                        enableBorder: opt(false),
+                        border: opt(colors.teal),
+                        background: opt(colors.base2),
+                        text: opt(colors.teal),
+                        icon: opt(colors.teal),
+                        icon_background: opt(colors.base2),
+                        spacing: opt('0.5em'),
+                    },
+                    worldclock: {
+                        enableBorder: opt(false),
+                        border: opt(colors.yellow),
+                        background: opt(colors.base2),
+                        text: opt(colors.yellow),
+                        icon: opt(colors.yellow),
+                        icon_background: opt(colors.base2),
+                        spacing: opt('0.5em'),
+                    },
                 },
             },
             menus: {
@@ -421,6 +469,9 @@ const options = mkOptions(CONFIG, {
                     radius: opt('0.7em'),
                     color: opt(colors.surface0),
                 },
+                enableShadow: opt(false),
+                shadow: opt('0px 0px 3px 1px #16161e'),
+                shadowMargins: opt('5px 5px'),
                 text: opt(colors.text),
                 dimtext: opt(colors.surface2),
                 feinttext: opt(colors.surface0),
@@ -968,7 +1019,6 @@ const options = mkOptions(CONFIG, {
             workspaces: opt(5),
             spacing: opt(1),
             monitorSpecific: opt(true),
-            hideUnoccupied: opt(true),
             workspaceMask: opt(false),
             reverse_scroll: opt(false),
             scroll_speed: opt(5),
@@ -977,8 +1027,8 @@ const options = mkOptions(CONFIG, {
             label: opt(true),
             rightClick: opt(''),
             middleClick: opt(''),
-            scrollUp: opt('pactl set-sink-volume @DEFAULT_SINK@ +5%'),
-            scrollDown: opt('pactl set-sink-volume @DEFAULT_SINK@ -5%'),
+            scrollUp: opt('hyprpanel vol +5'),
+            scrollDown: opt('hyprpanel vol -5'),
         },
         network: {
             truncation: opt(true),
@@ -1027,6 +1077,8 @@ const options = mkOptions(CONFIG, {
             show_active_only: opt(false),
             rightClick: opt(''),
             middleClick: opt(''),
+            scrollUp: opt(''),
+            scrollDown: opt(''),
         },
         notifications: {
             show_total: opt(false),
@@ -1044,6 +1096,16 @@ const options = mkOptions(CONFIG, {
         },
         customModules: {
             scrollSpeed: opt(5),
+            microphone: {
+                label: opt(true),
+                mutedIcon: opt('󰍭'),
+                unmutedIcon: opt('󰍬'),
+                leftClick: opt('menu:audio'),
+                rightClick: opt(''),
+                middleClick: opt(''),
+                scrollUp: opt(''),
+                scrollDown: opt(''),
+            },
             ram: {
                 icon: opt(''),
                 label: opt(true),
@@ -1116,6 +1178,8 @@ const options = mkOptions(CONFIG, {
             },
             updates: {
                 updateCommand: opt(`${SRC_DIR}/scripts/checkUpdates.sh -arch`),
+                updateTooltipCommand: opt(`${SRC_DIR}/scripts/checkUpdates.sh -arch -tooltip`),
+                extendedTooltip: opt(false),
                 label: opt(true),
                 padZero: opt(true),
                 autoHide: opt(false),
@@ -1124,7 +1188,7 @@ const options = mkOptions(CONFIG, {
                     updated: opt('󰏖'),
                 },
                 pollingInterval: opt(1000 * 60 * 60 * 6),
-                leftClick: opt(''),
+                leftClick: opt(`$TERMINAL -e ${SRC_DIR}/scripts/runUpdates.sh -arch`),
                 rightClick: opt(''),
                 middleClick: opt(''),
                 scrollUp: opt(''),
@@ -1176,8 +1240,8 @@ const options = mkOptions(CONFIG, {
             },
             hypridle: {
                 label: opt(true),
-                onIcon: opt(''),
-                offIcon: opt(''),
+                onIcon: opt('󰒳'),
+                offIcon: opt('󰒲'),
                 onLabel: opt('On'),
                 offLabel: opt('Off'),
                 pollingInterval: opt(1000 * 2),
@@ -1185,6 +1249,40 @@ const options = mkOptions(CONFIG, {
                 middleClick: opt(''),
                 scrollUp: opt(''),
                 scrollDown: opt(''),
+            },
+            cava: {
+                showIcon: opt(true),
+                icon: opt(''),
+                spaceCharacter: opt(' '),
+                barCharacters: opt(['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█']),
+                showActiveOnly: opt(false),
+                bars: opt(10),
+                channels: opt(2),
+                framerate: opt(60),
+                samplerate: opt(44100),
+                autoSensitivity: opt(true),
+                lowCutoff: opt(50),
+                highCutoff: opt(10000),
+                noiseReduction: opt(0.77),
+                stereo: opt(false),
+                leftClick: opt(''),
+                rightClick: opt(''),
+                middleClick: opt(''),
+                scrollUp: opt(''),
+                scrollDown: opt(''),
+            },
+            worldclock: {
+                icon: opt('󱉊'),
+                showIcon: opt(true),
+                format: opt('%I:%M:%S %p %Z'),
+                formatDiffDate: opt('%a %b %d  %I:%M:%S %p %Z'),
+                divider: opt('  '),
+                leftClick: opt('menu:calendar'),
+                rightClick: opt(''),
+                middleClick: opt(''),
+                scrollUp: opt(''),
+                scrollDown: opt(''),
+                tz: opt(['America/New_York', 'Europe/Paris', 'Asia/Tokyo']),
             },
         },
     },
@@ -1233,6 +1331,9 @@ const options = mkOptions(CONFIG, {
                 enabled: opt(true),
                 interval: opt(2000),
                 enable_gpu: opt(false),
+            },
+            recording: {
+                path: opt('$HOME/Videos/Screencasts'),
             },
             controls: {
                 enabled: opt(true),
@@ -1340,6 +1441,7 @@ const options = mkOptions(CONFIG, {
         active_monitor: opt(true),
         showActionsOnHover: opt(false),
         timeout: opt(7000),
+        autoDismiss: opt(false),
         cache_actions: opt(true),
         clearDelay: opt(100),
     },

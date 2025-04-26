@@ -1,6 +1,6 @@
 import { App } from 'astal/gtk3';
 import { PowerOptions } from 'src/lib/types/options.js';
-import { execAsync } from 'astal/process.js';
+import { execAsync } from 'astal';
 const { confirmation, shutdown, logout, sleep, reboot } = options.menus.dashboard.powermenu;
 
 /**
