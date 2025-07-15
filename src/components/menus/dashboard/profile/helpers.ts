@@ -1,7 +1,9 @@
 import { App } from 'astal/gtk3';
-import { PowerOptions } from 'src/lib/types/options.js';
 import { execAsync } from 'astal';
-const { confirmation, shutdown, logout, sleep, reboot } = options.menus.dashboard.powermenu;
+import { PowerOptions } from 'src/lib/options/types.js';
+import options from 'src/configuration';
+
+const { shutdown, logout, sleep, reboot } = options.menus.dashboard.powermenu;
 
 /**
  * Handles the click event for power options.
@@ -20,5 +22,7 @@ export const handleClick = (action: PowerOptions): void => {
     };
     App.get_window('dashboardmenu')?.set_visible(false);
 
-    execAsync(actions[action]).catch((err) => console.error(`Failed to execute ${action} command. Error: ${err}`));
+    execAsync(actions[action]).catch((err) =>
+        console.error(`Failed to execute ${action} command. Error: ${err}`),
+    );
 };
